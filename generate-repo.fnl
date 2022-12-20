@@ -53,7 +53,9 @@
      (set ,(sym :COMMIT) (+ 1 ,(sym :COMMIT)))
      [(fmt "touch %s.txt" ,(sym :COMMIT))
       (fmt "git add %s.txt" ,(sym :COMMIT))
-      (fmt "git commit -m 'added %s.txt'" ,(sym :COMMIT))]))
+      (fmt "git commit -m '%s added %s.txt'"
+           (if (= 0 ,(sym :MINOR) ,(sym :PATCH)) "breaking!" "")
+           ,(sym :COMMIT))]))
 
 (macro tag [name ?annotate]
   (if ?annotate
@@ -127,7 +129,9 @@
          (+minor)
          (where _ (= 0 (% i 3)))
          (+patch)
-         )])))
+         )])
+    (create-branch :equal-main)
+    (switch :equal-main)))
 
 (exec commands)
 
